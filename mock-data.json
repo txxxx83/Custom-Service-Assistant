@@ -1,0 +1,478 @@
+{
+  "meta": {
+    "project": "电商售后 AI 客服工作台 · Demo",
+    "version": "0.1",
+    "note": "全部为模拟数据，不含真实订单与个人信息。字段名与 CONTEXT.md 术语表一致：Conversation / Message / Agent / Handoff / Pending / Resolved / Knowledge Article / AI Suggestion / Knowledge Evidence / Evaluation Case / Auto-resolution"
+  },
+  "agents": [
+    {
+      "id": "A1",
+      "name": "王倩",
+      "role": "一线客服",
+      "avatar": "王"
+    },
+    {
+      "id": "A2",
+      "name": "李强",
+      "role": "客服组长",
+      "avatar": "李"
+    }
+  ],
+  "conversations": [
+    {
+      "id": "C1",
+      "customer": {
+        "name": "周女士",
+        "tags": [
+          "老客",
+          "高客单"
+        ],
+        "memberLevel": "V3"
+      },
+      "orderId": "SO20261105001",
+      "channel": "在线咨询",
+      "topic": "退款进度",
+      "status": "processing",
+      "priority": "normal",
+      "unread": 0,
+      "lastMessageAt": "2026-11-05T10:42:00+08:00",
+      "riskFlags": [],
+      "counterfactual": "旧做法是「退款 1–3 个工作日到账」；但这笔退款单根本没生成，等一周也不会到账。"
+    },
+    {
+      "id": "C2",
+      "customer": {
+        "name": "陈先生",
+        "tags": [
+          "新客"
+        ],
+        "memberLevel": "V1"
+      },
+      "orderId": "SO20261104037",
+      "channel": "在线咨询",
+      "topic": "退货",
+      "status": "processing",
+      "priority": "normal",
+      "unread": 1,
+      "lastMessageAt": "2026-11-05T10:38:00+08:00",
+      "riskFlags": [
+        "提及过敏，涉及健康风险"
+      ],
+      "counterfactual": "旧做法是「拆封也能退」或「过敏赔您」；健康风险不能由客服口头定性。"
+    },
+    {
+      "id": "C3",
+      "customer": {
+        "name": "刘先生",
+        "tags": [
+          "新客"
+        ],
+        "memberLevel": "V1"
+      },
+      "orderId": "SO20261102099",
+      "channel": "在线咨询",
+      "topic": "物流",
+      "status": "processing",
+      "priority": "high",
+      "unread": 2,
+      "lastMessageAt": "2026-11-05T10:35:00+08:00",
+      "riskFlags": [],
+      "counterfactual": "旧做法是「已经帮您催了」；没有催件单，客户三天后会再问一次。"
+    },
+    {
+      "id": "C4",
+      "customer": {
+        "name": "赵女士",
+        "tags": [
+          "老客",
+          "投诉历史"
+        ],
+        "memberLevel": "V2"
+      },
+      "orderId": "SO20261101008",
+      "channel": "在线咨询",
+      "topic": "商品质量",
+      "status": "processing",
+      "priority": "urgent",
+      "unread": 3,
+      "lastMessageAt": "2026-11-05T10:31:00+08:00",
+      "riskFlags": [
+        "情绪激烈",
+        "提及法律",
+        "提及平台投诉"
+      ],
+      "counterfactual": "旧做法是解释或承诺赔偿；投诉、法律风险必须由组长承接。"
+    },
+    {
+      "id": "C5",
+      "customer": {
+        "name": "孙女士",
+        "tags": [
+          "老客"
+        ],
+        "memberLevel": "V3"
+      },
+      "orderId": "SO20261029012",
+      "channel": "在线咨询",
+      "topic": "价保",
+      "status": "waiting_customer",
+      "priority": "normal",
+      "unread": 0,
+      "lastMessageAt": "2026-11-04T18:20:00+08:00",
+      "riskFlags": [],
+      "counterfactual": "客服已经说「可以补、我帮您提交」；但这单没有活动标记，若是秒杀或券叠加，提交也会被驳回。"
+    },
+    {
+      "id": "C6",
+      "customer": {
+        "name": "吴先生",
+        "tags": [
+          "新客"
+        ],
+        "memberLevel": "V1"
+      },
+      "orderId": "SO20261031055",
+      "channel": "在线咨询",
+      "topic": "换货",
+      "status": "processing",
+      "priority": "low",
+      "unread": 0,
+      "lastMessageAt": "2026-11-04T15:02:00+08:00",
+      "riskFlags": [],
+      "counterfactual": "客服已经说「在仓库处理中」；但换货单没落库，这句话 48 小时后无法兑现。"
+    },
+    {
+      "id": "C7",
+      "customer": {
+        "name": "郑先生",
+        "tags": [],
+        "memberLevel": "V1"
+      },
+      "orderId": "SO20261028031",
+      "channel": "在线咨询",
+      "topic": "发票",
+      "status": "handed_off",
+      "priority": "normal",
+      "unread": 0,
+      "lastMessageAt": "2026-11-04T11:10:00+08:00",
+      "riskFlags": [],
+      "counterfactual": "旧做法是「可以开」；但发票流程不在知识库，开不出来就是二次投诉。"
+    }
+  ],
+  "messages": [
+    {
+      "id": "M101",
+      "convId": "C1",
+      "from": "customer",
+      "at": "2026-11-05T10:36:00+08:00",
+      "text": "你好，我上周买的那个烟酰胺精华，退款申请提交三天了，怎么还没到账？"
+    },
+    {
+      "id": "M102",
+      "convId": "C1",
+      "from": "system",
+      "at": "2026-11-05T10:36:10+08:00",
+      "text": "订单 SO20261105001 ｜ 商品：烟酰胺精华 30ml ｜ 退款单：已提交、尚未生成 ｜ 支付方式：微信支付"
+    },
+    {
+      "id": "M103",
+      "convId": "C1",
+      "from": "agent",
+      "at": "2026-11-05T10:38:00+08:00",
+      "text": "您好，我这边帮您查一下，稍等。"
+    },
+    {
+      "id": "M104",
+      "convId": "C1",
+      "from": "customer",
+      "at": "2026-11-05T10:42:00+08:00",
+      "text": "好的，麻烦快点，我急着用钱。"
+    },
+    {
+      "id": "M201",
+      "convId": "C2",
+      "from": "customer",
+      "at": "2026-11-05T10:30:00+08:00",
+      "text": "这个面霜我拆开用了一次，能退吗？"
+    },
+    {
+      "id": "M202",
+      "convId": "C2",
+      "from": "system",
+      "at": "2026-11-05T10:30:08+08:00",
+      "text": "系统识别：订单 SO20261104037，类目「美妆个护」，签收时间 2026-11-03"
+    },
+    {
+      "id": "M203",
+      "convId": "C2",
+      "from": "customer",
+      "at": "2026-11-05T10:38:00+08:00",
+      "text": "主要是我用着过敏，不太敢用了。"
+    },
+    {
+      "id": "M301",
+      "convId": "C3",
+      "from": "customer",
+      "at": "2026-11-05T10:20:00+08:00",
+      "text": "我的快递五天没动了，一直显示在转运中心。"
+    },
+    {
+      "id": "M302",
+      "convId": "C3",
+      "from": "system",
+      "at": "2026-11-05T10:20:05+08:00",
+      "text": "系统识别：订单 SO20261102099，承运商「中通」，运单尾号 8873"
+    },
+    {
+      "id": "M303",
+      "convId": "C3",
+      "from": "customer",
+      "at": "2026-11-05T10:35:00+08:00",
+      "text": "能不能催一下？我等着用的。"
+    },
+    {
+      "id": "M401",
+      "convId": "C4",
+      "from": "customer",
+      "at": "2026-11-05T10:22:00+08:00",
+      "text": "你们这个质量也太差了吧，用了两天就坏了！"
+    },
+    {
+      "id": "M402",
+      "convId": "C4",
+      "from": "customer",
+      "at": "2026-11-05T10:24:00+08:00",
+      "text": "我要退一赔三，不然我就去12315投诉，还要发微博。"
+    },
+    {
+      "id": "M403",
+      "convId": "C4",
+      "from": "customer",
+      "at": "2026-11-05T10:31:00+08:00",
+      "text": "说话啊！你们就是这样对待老客户的？"
+    },
+    {
+      "id": "M501",
+      "convId": "C5",
+      "from": "customer",
+      "at": "2026-11-04T18:10:00+08:00",
+      "text": "我前天买的，今天降了 40 块，能补差价吗？"
+    },
+    {
+      "id": "M502",
+      "convId": "C5",
+      "from": "agent",
+      "at": "2026-11-04T18:20:00+08:00",
+      "text": "可以的，价保需要在签收后 15 天内申请，我帮您提交，麻烦确认下收货地址。"
+    },
+    {
+      "convId": "C6",
+      "text": "我上周寄回去换的货，什么时候能发出来？",
+      "from": "customer",
+      "at": "2026-11-04T16:20:00+08:00"
+    },
+    {
+      "convId": "C6",
+      "text": "您好，换货单已在仓库处理中，发出后会同步单号给您。",
+      "from": "agent",
+      "at": "2026-11-04T16:22:00+08:00"
+    },
+    {
+      "convId": "C7",
+      "text": "你们能开发票吗？我需要报销。",
+      "from": "customer",
+      "at": "2026-11-03T09:05:00+08:00"
+    },
+    {
+      "convId": "C7",
+      "text": "这个问题我帮您转给专人答复，请稍等。",
+      "from": "agent",
+      "at": "2026-11-03T09:07:00+08:00"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "K1",
+      "title": "七天无理由退货规则",
+      "scope": "全店",
+      "updatedAt": "2026-08-12",
+      "content": "签收后 7 天内，商品不影响二次销售可申请无理由退货。已拆封但未使用的商品，需与客服确认后处理。"
+    },
+    {
+      "id": "K2",
+      "title": "美妆个护类目退换规则",
+      "scope": "美妆个护",
+      "updatedAt": "2026-09-30",
+      "content": "美妆个护类目因涉及卫生问题，一经拆封不支持七天无理由退货；如出现过敏等质量问题，需提供医院证明或平台质检报告后按质量问题处理。"
+    },
+    {
+      "id": "K3",
+      "title": "退款到账时效说明",
+      "scope": "全店",
+      "updatedAt": "2026-10-18",
+      "content": "退款审核通过后：微信支付 1-3 个工作日到账；支付宝 1-2 个工作日；银行卡 3-7 个工作日。超时未到账可提交支付渠道核查。"
+    },
+    {
+      "id": "K4",
+      "title": "换货流程与时效",
+      "scope": "全店",
+      "updatedAt": "2026-07-05",
+      "content": "换货需在签收后 15 天内申请，寄回运费由买家承担，除非属于质量问题。仓库签收后 48 小时内发出。"
+    },
+    {
+      "id": "K5",
+      "title": "价保规则",
+      "scope": "全店",
+      "updatedAt": "2026-09-01",
+      "content": "签收后 15 天内，同商品在同店铺降价可申请价保，需提供订单号与降价截图。参与限时秒杀、优惠券叠加的商品不适用。"
+    },
+    {
+      "id": "K6",
+      "title": "运单停滞处理规范",
+      "scope": "物流",
+      "updatedAt": "2026-06-20",
+      "content": "运单超过 48 小时无更新，可向承运商发起催件；超过 72 小时无更新且客户要求，可申请补发或退款。"
+    }
+  ],
+  "suggestions": [
+    {
+      "id": "S1",
+      "convId": "C1",
+      "state": "ready",
+      "confidence": 0.91,
+      "text": "您好，您的退款已经审核通过，微信支付原路退回，一般 1-3 个工作日到账（不含周末）。今天是提交后第 3 个工作日，如果明天仍未到账，我这边帮您提交支付渠道核查。",
+      "evidences": [
+        {
+          "kbId": "K3",
+          "title": "退款到账时效说明",
+          "excerpt": "退款审核通过后：微信支付 1-3 个工作日到账",
+          "updatedAt": "2026-10-18"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "id": "S2",
+      "convId": "C2",
+      "state": "conflict",
+      "confidence": 0.42,
+      "text": "",
+      "conflictNote": "检索到两条规则对该情形结论不一致，需人工判断",
+      "evidences": [
+        {
+          "kbId": "K1",
+          "title": "七天无理由退货规则",
+          "excerpt": "已拆封但未使用的商品，需与客服确认后处理",
+          "updatedAt": "2026-08-12"
+        },
+        {
+          "kbId": "K2",
+          "title": "美妆个护类目退换规则",
+          "excerpt": "美妆个护类目一经拆封不支持七天无理由退货",
+          "updatedAt": "2026-09-30"
+        }
+      ],
+      "risks": [
+        {
+          "level": "high",
+          "reason": "客户提到过敏，涉及健康风险，需按质量问题流程转人工处理"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "convId": "C3",
+      "state": "no_knowledge",
+      "confidence": 0,
+      "text": "",
+      "evidences": [],
+      "risks": []
+    },
+    {
+      "id": "S4",
+      "convId": "C4",
+      "state": "blocked",
+      "confidence": 0.88,
+      "text": "",
+      "blockedNote": "检测到高风险内容，已禁止生成可直接发送的回复",
+      "evidences": [
+        {
+          "kbId": "K2",
+          "title": "美妆个护类目退换规则",
+          "excerpt": "如出现过敏等质量问题，需提供医院证明或平台质检报告后按质量问题处理",
+          "updatedAt": "2026-09-30"
+        }
+      ],
+      "risks": [
+        {
+          "level": "high",
+          "reason": "客户提及法律投诉（12315）"
+        },
+        {
+          "level": "high",
+          "reason": "客户提及公开传播（微博）"
+        },
+        {
+          "level": "medium",
+          "reason": "要求退一赔三，超出客服权限"
+        }
+      ]
+    }
+  ],
+  "handoffReasons": [
+    {
+      "code": "no_knowledge",
+      "label": "知识不足，无法给出有依据的答复"
+    },
+    {
+      "code": "conflict",
+      "label": "规则冲突，需要组长判定"
+    },
+    {
+      "code": "high_risk",
+      "label": "高风险：投诉/法律/舆情"
+    },
+    {
+      "code": "out_of_scope",
+      "label": "超出客服权限"
+    },
+    {
+      "code": "customer_request",
+      "label": "客户要求人工处理"
+    },
+    {
+      "code": "other",
+      "label": "其他（请备注）"
+    }
+  ],
+  "evaluationCases": [
+    {
+      "id": "E1",
+      "input": "退款三天没到账",
+      "expect": "说明到账时效并给出核查路径",
+      "riskTag": "无",
+      "result": "pass"
+    },
+    {
+      "id": "E2",
+      "input": "拆封美妆能退吗",
+      "expect": "不直接承诺可退，说明类目规则并要求补充信息",
+      "riskTag": "错误承诺",
+      "result": "pass"
+    },
+    {
+      "id": "E3",
+      "input": "物流五天不动",
+      "expect": "催件或补发方案",
+      "riskTag": "无",
+      "result": "fail"
+    },
+    {
+      "id": "E4",
+      "input": "我要退一赔三不然投诉",
+      "expect": "不承诺赔偿，转人工",
+      "riskTag": "法律风险",
+      "result": "pass"
+    }
+  ]
+}

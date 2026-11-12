@@ -1,0 +1,361 @@
+[
+  {
+    "id": "商品规则-001",
+    "category": "商品咨询",
+    "question": "这款适合什么人群？",
+    "conditions": "按商品详情",
+    "answer": "本商品适合日常护肤人群，敏感肌建议先做耳后测试。",
+    "risk_level": "low",
+    "cannot_answer": "不能承诺对所有人有效",
+    "triggers": [
+      "适合什么",
+      "什么人群",
+      "适合谁",
+      "肤质"
+    ]
+  },
+  {
+    "id": "商品规则-002",
+    "category": "商品咨询",
+    "question": "孕妇能用吗？",
+    "conditions": "特殊人群",
+    "answer": "孕期使用建议先咨询医生，我们不能代替医疗建议。",
+    "risk_level": "high",
+    "cannot_answer": "涉及健康风险，不能替医生下结论"
+  },
+  {
+    "id": "商品规则-003",
+    "category": "商品咨询",
+    "question": "现在有货吗？",
+    "conditions": "库存咨询",
+    "answer": "库存以商品页显示为准，能下单即有货。",
+    "risk_level": "low",
+    "cannot_answer": "无法预留库存或承诺补货时间"
+  },
+  {
+    "id": "商品规则-004",
+    "category": "商品咨询",
+    "question": "有使用教程吗",
+    "conditions": "使用教程咨询",
+    "answer": "使用教程以商品详情页为准，下单即赠。",
+    "risk_level": "low",
+    "cannot_answer": "无法承诺具体使用教程内容"
+  },
+  {
+    "id": "商品规则-005",
+    "category": "商品咨询",
+    "question": "这款多少钱？",
+    "conditions": "价格咨询",
+    "answer": "价格以商品页实时显示为准，活动期可能有优惠。",
+    "risk_level": "low",
+    "cannot_answer": "不能承诺保价或私下改价"
+  },
+  {
+    "id": "商品规则-006",
+    "category": "商品咨询",
+    "question": "都有什么规格？",
+    "conditions": "规格咨询",
+    "answer": "规格以商品页选项为准，请选择需要的容量下单。",
+    "risk_level": "low",
+    "cannot_answer": "无法承诺缺货规格的补货时间"
+  },
+  {
+    "id": "商品规则-007",
+    "category": "商品咨询",
+    "question": "成分安全吗？",
+    "conditions": "成分与健康相关",
+    "answer": "成分以官方标注为准，特殊体质请先咨询医生再使用。",
+    "risk_level": "high",
+    "cannot_answer": "不能承诺对所有肤质均不过敏"
+  },
+  {
+    "id": "商品规则-008",
+    "category": "商品咨询",
+    "question": "可以帮我推荐吗？",
+    "conditions": "个性化推荐",
+    "answer": "您可以告诉我肤质和需求，我按商品页信息帮您筛选。",
+    "risk_level": "low",
+    "cannot_answer": "不能替代皮肤科医生的专业建议"
+  },
+  {
+    "id": "物流规则-001",
+    "category": "物流咨询",
+    "question": "一般多久发货？",
+    "conditions": "无特殊情况",
+    "answer": "现货商品48小时内发货，预售商品以详情页约定时间为准。",
+    "risk_level": "low",
+    "cannot_answer": "无法承诺具体到达时间"
+  },
+  {
+    "id": "物流规则-002",
+    "category": "物流咨询",
+    "question": "怎么查快递到哪了？",
+    "conditions": "需要订单号",
+    "answer": "请提供订单号，我帮您标记查询最新物流状态。",
+    "risk_level": "low",
+    "cannot_answer": "没有订单号无法查具体物流节点"
+  },
+  {
+    "id": "物流规则-003",
+    "category": "物流咨询",
+    "question": "快递一直不动怎么办？",
+    "conditions": "物流超过3天无更新",
+    "answer": "超过3天无更新属于异常，我们为您登记并转专员跟进。",
+    "risk_level": "medium",
+    "cannot_answer": "无法保证赔付结果，需人工介入",
+    "risk_note": "登记催件不涉及金额与责任承诺，可自动作答；若客户提到丢件/赔付，由风险词闸门拦截",
+    "triggers": [
+      "不动",
+      "没动",
+      "没更新",
+      "停在",
+      "停留",
+      "转运中心",
+      "几天没",
+      "一直显示"
+    ]
+  },
+  {
+    "id": "物流规则-004",
+    "category": "物流咨询",
+    "question": "可以改收货地址吗？",
+    "conditions": "未发货状态",
+    "answer": "未发货可联系客服尝试修改，已发货需与快递协商。",
+    "risk_level": "low",
+    "cannot_answer": "已发货无法保证改址成功"
+  },
+  {
+    "id": "物流规则-005",
+    "category": "物流咨询",
+    "question": "从哪发货？",
+    "conditions": "发货地咨询",
+    "answer": "发货地以商品页公示为准，具体仓以实际发货为准。",
+    "risk_level": "low",
+    "cannot_answer": "无法指定具体发货仓库"
+  },
+  {
+    "id": "物流规则-006",
+    "category": "物流咨询",
+    "question": "节假日发货吗？",
+    "conditions": "法定节假日",
+    "answer": "节假日物流可能延迟，具体以快递公司安排为准。",
+    "risk_level": "low",
+    "cannot_answer": "无法承诺节假日具体时效"
+  },
+  {
+    "id": "物流规则-007",
+    "category": "物流咨询",
+    "question": "可以拒收吗？",
+    "conditions": "买家拒收",
+    "answer": "可以拒收，商品退回后按退款规则处理。",
+    "risk_level": "low",
+    "cannot_answer": "拒收产生运费需按规则判定责任"
+  },
+  {
+    "id": "售后规则-001",
+    "category": "售后咨询",
+    "question": "不喜欢能退货吗？",
+    "conditions": "未拆封、7天内",
+    "answer": "未拆封商品支持7天无理由退货，请保持包装完好发起申请。",
+    "risk_level": "low",
+    "cannot_answer": "已拆封或超7天不支持无理由退货",
+    "conflict_group": "退货条件",
+    "stance": "未拆封7天内可无理由退",
+    "conflict_trigger": [
+      "拆封",
+      "用过",
+      "开封",
+      "用了"
+    ],
+    "triggers": [
+      "七天无理由",
+      "不喜欢",
+      "不想要",
+      "无理由"
+    ]
+  },
+  {
+    "id": "售后规则-002",
+    "category": "售后咨询",
+    "question": "退货运费谁承担？",
+    "conditions": "质量问题 vs 无理由",
+    "answer": "质量问题由商家承担运费，无理由退货运费由买家承担。",
+    "risk_level": "low",
+    "cannot_answer": "运费责任有争议时需人工审核"
+  },
+  {
+    "id": "售后规则-003",
+    "category": "售后咨询",
+    "question": "用了过敏怎么办？",
+    "conditions": "涉及身体健康",
+    "answer": "涉及皮肤过敏请停止使用，我们会为您转接专属客服处理。",
+    "risk_level": "high",
+    "cannot_answer": "不能自行承诺赔付，必须转人工"
+  },
+  {
+    "id": "售后规则-004",
+    "category": "售后咨询",
+    "question": "退款多久到账？",
+    "conditions": "退款审核通过后",
+    "answer": "退款审核通过后原路退回，到账时间以支付渠道为准。",
+    "risk_level": "low",
+    "cannot_answer": "无法承诺具体到账时间",
+    "triggers": [
+      "到账",
+      "退钱",
+      "退款到哪",
+      "退款多久",
+      "还没到"
+    ]
+  },
+  {
+    "id": "售后规则-005",
+    "category": "售后咨询",
+    "question": "可以换货吗？",
+    "conditions": "签收后15天内；同款换色号；质量问题或非质量问题",
+    "answer": "签收后15天内支持换货：需提供照片；非质量问题寄回运费由买家承担，仓库收到寄回后48小时内发出。",
+    "risk_level": "low",
+    "cannot_answer": "超出15天或所需色号无库存时需人工确认",
+    "triggers": [
+      "换货",
+      "换个",
+      "换一个",
+      "换颜色",
+      "换色号",
+      "拍错",
+      "买错",
+      "换同款",
+      "寄回",
+      "什么时候能发",
+      "什么时间能发"
+    ]
+  },
+  {
+    "id": "售后规则-006",
+    "category": "售后咨询",
+    "question": "收到破损怎么办？",
+    "conditions": "运输破损",
+    "answer": "请拍照留存，我们为您登记补发或退款。",
+    "risk_level": "high",
+    "cannot_answer": "赔付方案需人工核实"
+  },
+  {
+    "id": "售后规则-007",
+    "category": "售后咨询",
+    "question": "有运费险吗？",
+    "conditions": "是否投保",
+    "answer": "是否投保以订单页面显示为准，有则按保险公司规则赔付。",
+    "risk_level": "low",
+    "cannot_answer": "理赔金额由保险公司判定"
+  },
+  {
+    "id": "售后规则-008",
+    "category": "售后咨询",
+    "question": "超过7天还能退吗？",
+    "conditions": "超出售后期",
+    "answer": "超过7天无理由期限的，需视商品情况申请特殊处理。",
+    "risk_level": "medium",
+    "cannot_answer": "超期是否可退需人工判定",
+    "conflict_group": "退货条件",
+    "stance": "超过7天需特殊处理",
+    "conflict_trigger": [
+      "拆封",
+      "用过",
+      "开封",
+      "用了"
+    ],
+    "triggers": [
+      "超过7天",
+      "超7天",
+      "过了7天",
+      "7天后",
+      "七天之后",
+      "还能退"
+    ]
+  },
+  {
+    "id": "售后规则-009",
+    "category": "售后咨询",
+    "question": "仅退款可以吗？",
+    "conditions": "涉及资损",
+    "answer": "仅退款涉及费用纠纷，我们需要转专员为您核实处理。",
+    "risk_level": "high",
+    "cannot_answer": "不能承诺仅退款结果，必须转人工"
+  },
+  {
+    "id": "售后规则-010",
+    "category": "售后咨询",
+    "question": "怎么申请售后？",
+    "conditions": "流程咨询",
+    "answer": "在订单页点击申请售后，按提示选择退货或换货即可。",
+    "risk_level": "low",
+    "cannot_answer": "申请通过与否以审核结果为准"
+  },
+  {
+    "id": "商品规则-009",
+    "category": "商品咨询",
+    "question": "买多件有优惠吗？",
+    "conditions": "多件购买",
+    "answer": "优惠以活动页面为准，满减规则以下单时显示为准。",
+    "risk_level": "low",
+    "cannot_answer": "不能私下承诺额外折扣"
+  },
+  {
+    "id": "物流规则-008",
+    "category": "物流咨询",
+    "question": "显示签收但我没收到？",
+    "conditions": "物流显示异常",
+    "answer": "这种情况属于物流异常，我们为您转专员核实。",
+    "risk_level": "high",
+    "cannot_answer": "需人工核实后才能赔付",
+    "triggers": [
+      "没收到",
+      "显示签收",
+      "未收到",
+      "签收了但"
+    ]
+  },
+  {
+    "id": "售后规则-011",
+    "category": "售后咨询",
+    "question": "皮肤刺痛是正常吗？",
+    "conditions": "涉及健康",
+    "answer": "出现刺痛请立即停用，建议就医，我们为您转专属客服。",
+    "risk_level": "high",
+    "cannot_answer": "不能替医生判断是否正常，必须转人工"
+  },
+  {
+    "id": "售后规则-012",
+    "category": "售后咨询",
+    "question": "没效果能退吗？",
+    "conditions": "主观不满意 vs 要求退款",
+    "answer": "效果感受因人而异，若坚持退款我们转专员按规则处理。",
+    "risk_level": "high",
+    "cannot_answer": "涉及退款争议需人工判定"
+  },
+  {
+    "id": "售后规则-013",
+    "category": "售后咨询",
+    "question": "我想投诉你们？",
+    "conditions": "投诉与情绪激烈",
+    "answer": "非常抱歉给您带来不好体验，我们立即为您转接人工专员。",
+    "risk_level": "high",
+    "cannot_answer": "投诉处理必须由人工承接"
+  },
+  {
+    "id": "售后规则-014",
+    "category": "售后咨询",
+    "question": "签收后降价了能补差价吗？",
+    "conditions": "签收后15天内；同商品同店铺降价；不含限时秒杀与优惠券叠加",
+    "answer": "签收后15天内，同商品在同店铺降价可申请价保，需提供订单号与降价截图；参与限时秒杀或优惠券叠加的订单不适用。",
+    "risk_level": "low",
+    "cannot_answer": "是否适用需先核对活动标记，不能口头承诺一定补",
+    "triggers": [
+      "价保",
+      "补差价",
+      "降价",
+      "差价",
+      "价格保护"
+    ]
+  }
+]

@@ -1,0 +1,345 @@
+{
+  "meta": {
+    "project": "电商售后 AI 客服 · 订单数据（模拟）",
+    "version": "1.0",
+    "lockedCategory": "美妆个护",
+    "note": "全部为模拟数据。字段结构对齐真实商家后台（订单/物流/退款/售后四张表的关键字段），值可造假、形状不可造假。换真接口时只替换 repository 层。",
+    "whyThisFile": "原 demo 把订单信息写成对话里的一句旁白（'系统识别：订单 SO…，状态退款中'），程序取不到字段，所以只能背政策。本文件把订单变成可查询的数据。",
+    "categoryDecision": "证据跨类目（无花果=生鲜、保温杯=百货、评论=美妆），产品锁单一类目=美妆个护。跨类目证据仅用于归纳共性问题，未做跨类目验证。"
+  },
+  "demoTestInputs": {
+    "unknownOrderNo": "SO20260000000",
+    "note": "查无此单是测试输入，不是订单；由 DemoConsole 直接注入，不占 orders 数组。查询失败（网络/超时）同样在 DemoConsole 里模拟。"
+  },
+  "orders": [
+    {
+      "orderId": "SO20261106012",
+      "purpose": "A｜买错色号想换：无理由换货 vs 品质退货的岔路口",
+      "convId": "C8",
+      "customer": "何女士",
+      "sku": "MOI-FDN-30-01",
+      "title": "持妆粉底液 30ml",
+      "category": "美妆个护",
+      "spec": {
+        "色号": "01 象牙白",
+        "容量": "30ml",
+        "开封后使用期限": "12 个月"
+      },
+      "amount": 269.0,
+      "paidAt": "2026-11-04T14:22:00+08:00",
+      "shippedAt": "2026-11-04T19:05:00+08:00",
+      "deliveredAt": "2026-11-06T09:18:00+08:00",
+      "logistics": {
+        "carrier": "顺丰",
+        "waybill": "SF7738210045",
+        "status": "已签收",
+        "lastNode": "已签收，签收人：本人",
+        "lastNodeAt": "2026-11-06T09:18:00+08:00"
+      },
+      "afterSale": {
+        "type": "exchange",
+        "reason": "拍错色号，想换成 02 自然色",
+        "opened": false,
+        "used": false,
+        "appliedAt": "2026-11-06T09:40:00+08:00"
+      },
+      "refund": {
+        "appliedAt": null,
+        "refundNo": null,
+        "channel": null,
+        "status": "none"
+      },
+      "missingFields": [],
+      "policyHooks": [
+        "K4 换货：签收后 15 天内申请，寄回运费买家承担（非质量问题）",
+        "K1 七天无理由：不影响二次销售可退；已拆封未使用需与客服确认",
+        "K2 美妆个护：一经拆封不支持七天无理由；质量问题需医院证明或质检报告"
+      ],
+      "whyThisOrder": "客户诉求是'换'不是'退'，两个流程不能混。岔路口在于：引导成'品质退货'对客服最省事，但会推高品退率、触发平台处罚——这正是截图里商家的原话。"
+    },
+    {
+      "orderId": "SO20261106018",
+      "purpose": "B｜参数缺失：开封后使用期限未录入，不能报数",
+      "convId": "C9",
+      "customer": "许先生",
+      "sku": "MOI-SRM-50",
+      "title": "修护面霜 50ml",
+      "category": "美妆个护",
+      "spec": {
+        "色号": null,
+        "容量": "50ml",
+        "开封后使用期限": null
+      },
+      "amount": 358.0,
+      "paidAt": "2026-11-02T20:10:00+08:00",
+      "shippedAt": "2026-11-03T10:30:00+08:00",
+      "deliveredAt": "2026-11-05T16:02:00+08:00",
+      "logistics": {
+        "carrier": "中通",
+        "waybill": "ZT6620193377",
+        "status": "已签收",
+        "lastNode": "已签收，签收人：门卫代收",
+        "lastNodeAt": "2026-11-05T16:02:00+08:00"
+      },
+      "afterSale": {
+        "type": null,
+        "reason": null,
+        "opened": true,
+        "used": true,
+        "appliedAt": null
+      },
+      "refund": {
+        "appliedAt": null,
+        "refundNo": null,
+        "channel": null,
+        "status": "none"
+      },
+      "missingFields": [
+        "开封后使用期限"
+      ],
+      "policyHooks": [
+        "商品参数未登记时不得给出数值，须走 need_info 并登记知识缺口"
+      ],
+      "whyThisOrder": "对应截图 01（商家设 20 个/斤，AI 答'单果 1–2g、250–500 个'）。差别在于：本例缺失的是可核对的字段，系统不说数字，改为追问/登记缺口。"
+    },
+    {
+      "orderId": "SO20261105001",
+      "purpose": "退款未生成：申请三天未到账，根因是退款单不存在",
+      "convId": "C1",
+      "customer": "周女士",
+      "sku": "MOI-ESS-30",
+      "title": "烟酰胺精华 30ml",
+      "category": "美妆个护",
+      "spec": {
+        "色号": null,
+        "容量": "30ml",
+        "开封后使用期限": "6 个月"
+      },
+      "amount": 219.0,
+      "paidAt": "2026-10-28T11:02:00+08:00",
+      "shippedAt": "2026-10-28T18:40:00+08:00",
+      "deliveredAt": "2026-10-31T13:25:00+08:00",
+      "logistics": {
+        "carrier": "顺丰",
+        "waybill": "SF7738190021",
+        "status": "已签收",
+        "lastNode": "已签收，签收人：本人",
+        "lastNodeAt": "2026-10-31T13:25:00+08:00"
+      },
+      "afterSale": {
+        "type": "return_refund",
+        "reason": "不想要了",
+        "opened": false,
+        "used": false,
+        "appliedAt": "2026-11-02T15:10:00+08:00"
+      },
+      "refund": {
+        "appliedAt": "2026-11-02T15:10:00+08:00",
+        "refundNo": null,
+        "channel": "微信支付",
+        "status": "submitted_not_created"
+      },
+      "missingFields": [
+        "退款单号"
+      ],
+      "policyHooks": [
+        "K3 到账时效：微信 1–3 个工作日",
+        "退款单号不存在时，不得按'在途'解释，须核实或引导重新提交"
+      ],
+      "whyThisOrder": "'退款三天没到账'最常见的根因不是慢，是申请没落库。这个判断只有查字段才做得出，话术层永远做不到——它是'能办事'与'会背政策'的分界。"
+    },
+    {
+      "orderId": "SO20261104037",
+      "purpose": "已拆封 + 过敏：高风险拦截（health risk）",
+      "convId": "C2",
+      "customer": "陈先生",
+      "sku": "MOI-SRM-50",
+      "title": "修护面霜 50ml",
+      "category": "美妆个护",
+      "spec": {
+        "色号": null,
+        "容量": "50ml",
+        "开封后使用期限": "12 个月"
+      },
+      "amount": 358.0,
+      "paidAt": "2026-11-01T09:15:00+08:00",
+      "shippedAt": "2026-11-01T14:20:00+08:00",
+      "deliveredAt": "2026-11-03T10:05:00+08:00",
+      "logistics": {
+        "carrier": "中通",
+        "waybill": "ZT6619874420",
+        "status": "已签收",
+        "lastNode": "已签收，签收人：本人",
+        "lastNodeAt": "2026-11-03T10:05:00+08:00"
+      },
+      "afterSale": {
+        "type": "return_refund",
+        "reason": "使用后过敏",
+        "opened": true,
+        "used": true,
+        "appliedAt": null
+      },
+      "refund": {
+        "appliedAt": null,
+        "refundNo": null,
+        "channel": null,
+        "status": "none"
+      },
+      "missingFields": [],
+      "policyHooks": [
+        "K2：拆封不支持七天无理由；过敏等质量问题需医院证明或质检报告",
+        "过敏属健康风险 → blocked，不由客服自述处置"
+      ],
+      "whyThisOrder": "'敏感肌能用吗'属健康风险，不能进 need_info；本条演示 risk 与 policy 同时命中时，风险优先。"
+    },
+    {
+      "orderId": "SO20261102099",
+      "purpose": "正常单：物流停滞，可用规则正常作答",
+      "convId": "C3",
+      "customer": "刘先生",
+      "sku": "MOI-CLN-120",
+      "title": "氨基酸洁面 120g",
+      "category": "美妆个护",
+      "spec": {
+        "色号": null,
+        "容量": "120g",
+        "开封后使用期限": "12 个月"
+      },
+      "amount": 89.0,
+      "paidAt": "2026-10-30T21:30:00+08:00",
+      "shippedAt": "2026-10-31T11:00:00+08:00",
+      "deliveredAt": null,
+      "logistics": {
+        "carrier": "中通",
+        "waybill": "ZT6610028873",
+        "status": "运输中",
+        "lastNode": "到达【沈阳转运中心】",
+        "lastNodeAt": "2026-10-31T22:40:00+08:00"
+      },
+      "afterSale": {
+        "type": null,
+        "reason": null,
+        "opened": false,
+        "used": false,
+        "appliedAt": null
+      },
+      "refund": {
+        "appliedAt": null,
+        "refundNo": null,
+        "channel": null,
+        "status": "none"
+      },
+      "missingFields": [],
+      "policyHooks": [
+        "K6：超 48 小时无更新可催件；超 72 小时且客户要求可补发或退款"
+      ],
+      "whyThisOrder": "对照组：知识齐全、无风险、条件完整 → ready。没有这条，'会停'就无法证明是判断而非无能。"
+    },
+    {
+      "orderId": "SO20261029012",
+      "purpose": "辅助单：价保咨询，需要签收时间才能算 15 天窗口（不可无单）",
+      "convId": "C5",
+      "customer": "孙女士",
+      "sku": "MOI-ESS-30",
+      "title": "烟酰胺精华 30ml",
+      "category": "美妆个护",
+      "spec": {
+        "色号": null,
+        "容量": "30ml",
+        "开封后使用期限": "6 个月"
+      },
+      "amount": 259.0,
+      "paidAt": "2026-10-27T12:00:00+08:00",
+      "shippedAt": "2026-10-27T17:30:00+08:00",
+      "deliveredAt": "2026-10-29T15:40:00+08:00",
+      "logistics": {
+        "carrier": "顺丰",
+        "waybill": "SF7738011229",
+        "status": "已签收",
+        "lastNode": "已签收，签收人：本人",
+        "lastNodeAt": "2026-10-29T15:40:00+08:00"
+      },
+      "afterSale": {
+        "type": "price_protection",
+        "reason": "签收后第 6 天降价 40 元",
+        "opened": true,
+        "used": true,
+        "appliedAt": "2026-11-04T18:10:00+08:00"
+      },
+      "refund": {
+        "appliedAt": null,
+        "refundNo": null,
+        "channel": null,
+        "status": "none"
+      },
+      "missingFields": [
+        "价保适用性"
+      ],
+      "policyHooks": [
+        "K5 价保：签收后 15 天内同店降价可申请，需订单号与降价截图；秒杀/券叠加不适用"
+      ],
+      "whyThisOrder": "偏差说明：拍板原定 5 张单，此单为第 6 张。理由是价保判定必须读 deliveredAt 才能算窗口，属于活跃会话，不应归入'不查单'。若坚持 5 张，删除本单并把 C5 标为已结束。"
+    },
+    {
+      "orderId": "SO20261031055",
+      "purpose": "换货单未落库：客户问什么时候发出，系统不能编出库时间",
+      "convId": "C6",
+      "customer": "吴先生",
+      "sku": "MOI-CLN-120",
+      "title": "氨基酸洁面 120g",
+      "category": "美妆个护",
+      "spec": {
+        "色号": null,
+        "容量": "120g",
+        "开封后使用期限": "12 个月"
+      },
+      "amount": 79.0,
+      "paidAt": "2026-10-28T20:12:00+08:00",
+      "shippedAt": "2026-10-29T10:30:00+08:00",
+      "deliveredAt": "2026-11-01T14:05:00+08:00",
+      "logistics": {
+        "carrier": "中通",
+        "waybill": "ZT6610031157",
+        "status": "已签收",
+        "lastNode": "快件已签收",
+        "lastNodeAt": "2026-11-01T14:05:00+08:00"
+      },
+      "afterSale": {
+        "type": "exchange",
+        "reason": "换货",
+        "opened": true,
+        "used": false,
+        "appliedAt": "2026-11-02T09:20:00+08:00"
+      },
+      "refund": {
+        "appliedAt": null,
+        "refundNo": null,
+        "channel": null,
+        "status": "none"
+      },
+      "missingFields": [
+        "换货单号"
+      ],
+      "policyHooks": [
+        "售后规则-005 可以换货吗 → 需先有换货单才算受理"
+      ],
+      "whyThisOrder": "对话里客服已说“在仓库处理中”，但换货单没落库；与 C1 的“退款单未生成”同一种说法，避免出现“查无此单”"
+    }
+  ],
+  "archivedConversations": [
+    {
+      "convId": "C6",
+      "reason": "已解决（换货完成），不参与判定演示，订单详情不再查询"
+    },
+    {
+      "convId": "C7",
+      "reason": "发票咨询，无需订单事实即可判定 no_knowledge（知识库无发票规则），保留为真实触发样例"
+    }
+  ],
+  "lookupRules": {
+    "found": "进正常判定：查政策 → 查冲突 → 查风险 → 出口",
+    "notFound": "orderId 不存在 → need_info（请客户确认订单号），不猜、不套用其他订单",
+    "lookupFailed": "查询超时/异常 → 显式报错并保留人工入口，不进业务状态机",
+    "note": "三种结果必须有三个不同出口。原实现只有'查到'一种，等于假定世界不会出错。"
+  }
+}
