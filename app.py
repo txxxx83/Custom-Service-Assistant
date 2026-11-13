@@ -123,11 +123,8 @@ STATUS_LABEL = {
 PRIORITY_LABEL = {"urgent": "紧急", "high": "高", "normal": "普通", "low": "低"}
 SENDER_LABEL = {"customer": "顾客", "agent": "客服", "system": "系统"}
 STATE_LABEL = {
-    "ready": "可审核",
-    "need_info": "信息不足",
-    "conflict": "规则冲突",
-    "no_knowledge": "知识不足",
-    "blocked": "高风险拦截",
+    **policy.STATE_LABEL,
+    # 界面独有的一个态：还没产出建议（不是判定结果）
     "missing": "暂无建议",
 }
 STATE_CHIP = {
@@ -380,7 +377,9 @@ def label(c: dict) -> str:
     )
 
 
-RISK_WORDS = ["12315", "投诉", "曝光", "过敏", "赔偿", "退一赔三", "消协", "律师"]
+# 风险词只有一份：engine.HANDOFF_KEYWORDS（16 个，11 high / 5 medium）。
+# 这里曾经另写过一个 8 词列表，且早已无人使用——留着只会让文档引错口径，故改为别名。
+RISK_WORDS = policy.HANDOFF_KEYWORDS
 
 
 @st.cache_data(show_spinner=False)
@@ -390,6 +389,26 @@ def load_orders() -> dict:
 
 def customer_texts(cid: str) -> list[str]:
     return [m.get("text", "") for m in MESSAGES_BY_CONV.get(cid, []) if m.get("from") == "customer"]
+
+
+def conv_as_of(cid: str) -> str:
+    """模拟数据没有真实时钟：以该会话最后一条消息的时间作为判定参考时刻。
+
+    话术里的"停了几天"必须由它减订单字段算出来。不用 datetime.now()——
+    那会让同一张单在不同日期跑出不同结论，演示就没法复现了。
+    """
+    return max((m.get("at", "") for m in MESSAGES_BY_CONV.get(cid, [])), default="")
+
+
+def order_as_of(order_no: str) -> str:
+    """「试一句」选了订单就用该单所属会话的时刻，没选就用全局最后一条消息。"""
+    if order_no:
+        for o in load_orders().get("orders") or []:
+            if o.get("orderId") == order_no:
+                t = conv_as_of(o.get("convId", ""))
+                if t:
+                    return t
+    return max((m.get("at", "") for m in messages), default="")
 
 
 def get_verdict(conv: dict) -> policy.Verdict:
@@ -411,6 +430,7 @@ def get_verdict(conv: dict) -> policy.Verdict:
             kb=get_engine_kb(),
             orders_doc=load_orders(),
             dialog=question,
+            as_of=conv_as_of(cid),
         )
     return cache[cid]
 
@@ -551,6 +571,7 @@ def render_try_box() -> None:
             kb=get_engine_kb(),
             orders_doc=load_orders(),
             dialog=question.strip(),
+            as_of=order_as_of("" if picked.startswith("（") else picked),
         )
         st.markdown(
             f'<div class="card"><div class="card-h"><div class="card-t">判定结果</div>'
@@ -661,8 +682,9 @@ def render_return_reason() -> None:
     st.markdown("### 同一单，三种退货原因，代价不一样")
     st.markdown(
         '<div class="small">客户只是买错了色号。三个原因在后台<b>都提交得上去</b>，'
-        '但只有一个不会让商家多掏运费、被计入商责退货率；'
-        '本系统只允许那一个，其余两个要么不让选，要么必须补证据。</div>',
+        '但只有品质退货会让商家多掏来回运费、还被计入商责退货率。'
+        '本系统<b>禁掉品质退货</b>（这单没有质量证据）；七天无理由与换货<b>都可选</b>，'
+        '它们的差别是运费谁承担——所以这一屏不是"只有一个正确答案"，是"选错谁付钱"。</div>',
         unsafe_allow_html=True,
     )
 
@@ -745,7 +767,7 @@ def render_return_reason() -> None:
                 '<div class="card-body">后台确实能提交这个原因，但本系统不替你选。'
                 '要按品质退货走，必须先有两样东西：① 客户提供的质检报告或医院证明；② 客户书面确认这不是拍错色号。'
                 '两样都没有时，这一格只说明后果——提交了就会被记成商责退货，运费由商家承担。</div>'
-                '<div class="conf">依据：售后规则-003 用了过敏怎么办（需医院证明或质检报告）　·　兜底：客服组长（升级才可提交）</div></div>',
+                '<div class="conf">依据：订单 policyHooks K2（美妆个护质量问题需医院证明或质检报告）＋ 售后规则-003（过敏类必须转人工）　·　兜底：客服组长（升级才可提交）</div></div>',
                 unsafe_allow_html=True,
             )
     with vcol2:
@@ -1077,7 +1099,8 @@ with tab_work:
                 elif sug_state == "conflict":
                     body = (sug.get("conflictNote") or "检索到结论相反的规则，需人工判断。").replace("<", "&lt;")
                 elif sug_state == "no_knowledge":
-                    body = "未检索到适用规则，不生成结论。可转人工或提交知识缺口。"
+                    # 只承诺界面上真有的动作：转人工按钮存在，知识缺口登记还没做。
+                    body = "未检索到适用规则，不生成结论。可转人工；知识缺口登记尚未实现。"
                 elif sug_state == "blocked":
                     body = (sug.get("blockedNote") or "检测到高风险，已禁止生成可发送内容。").replace("<", "&lt;")
 
@@ -1354,7 +1377,7 @@ def render_meta(tab_eval, tab_note) -> None:
         st.markdown(
             """
     - **知识库**：`data/knowledge_base.json`，31 条规则（售后 14 / 商品 9 / 物流 8），与评测用的是同一份；其中 2 条标了互斥组，用来产生「规则冲突」。
-    - **判定层**：`policy.py`，一条线走完「风险 → 规则冲突 → 查订单 → 缺字段 → 知识匹配 → 出口」。界面上的建议卡、发送门禁、转人工原因读的都是同一个 `Verdict` 对象，不存在第二套判断。
+    - **判定层**：`policy.py`，一条线走完七步「识别意图 → 对话风险词 → 规则互斥冲突 → 查订单 → 本轮缺失字段 → 知识匹配 → 规则风险等级 → 出口」。界面上的建议卡、发送门禁、转人工原因读的都是同一个 `Verdict` 对象，不存在第二套判断；状态中文标签也只有一份（`policy.STATE_LABEL`），界面不再另写一套。
     - **检索**：`engine.py` 只负责召回（意图关键词 + 实词重合），把候选规则交给判定层，自己不下结论。
     - **会话数据**：`mock-data.json` 提供 7 条会话与消息。**每条会话的结论是打开时现场算的**，不是写死的：换成另一条会话、或在「试一句」里输入任意问题，结论会跟着变。
     - **DeepSeek**：只在 `ready` 状态下润色措辞，模型返回的 `state` 会被丢弃——判定权不在模型手里。没有 key 时用知识条目原文兜底，流程照样跑完。

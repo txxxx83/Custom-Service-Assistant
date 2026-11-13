@@ -1,4 +1,4 @@
-"""判定层验收：14 条用例，状态、门禁、归属必须同时成立。
+"""判定层验收：15 条用例，状态、门禁、归属必须同时成立。
 
 跑法：python test_policy.py
 任何一条 FAIL 就不算完成——因为界面上"卡片说不可发、按钮却能点"
@@ -123,7 +123,39 @@ def run() -> int:
             print(f"       !!! {' / '.join(problems)}")
         print()
 
-    print(f"结果：{passed} 通过 / {failed} 失败，共 {len(CASES)} 条")
+    # ---- 第 15 条：客户口径 vs 字段口径 ----
+    # 这是本项目主张「只说有依据的话」最直接的一条验收：
+    # 客户说"五天没动"，运单节点时间算出来是 4 天，话术必须用 4 天，
+    # 并且把这次对账记进判定步骤，让客服看得见系统纠正了客户口径。
+    q15 = "我的快递五天没动了，一直显示在转运中心"
+    v = decide(q15, order_no="SO20261102099", orders_doc=orders_doc,
+               dialog=q15, as_of="2026-11-05T10:35:00+08:00")
+    text, src = compose_answer(v)
+    problems = []
+    if v.state != "ready":
+        problems.append(f"state={v.state} 期望 ready")
+    if "已经 4 天没有更新" not in text:
+        problems.append(f"话术未按节点时间算天数：{text}")
+    if "5 天" in text:
+        problems.append("话术抄了客户口径的 5 天")
+    if not any(name == "核对客户口径" for name, _ in v.steps):
+        problems.append("没有记录客户口径与字段口径的对账步骤")
+    if "已为您登记" in text:
+        problems.append("声称已完成未执行的动作")
+    flag = "PASS" if not problems else "FAIL"
+    if problems:
+        failed += 1
+    else:
+        passed += 1
+    print(f"[{flag}] 客户说 5 天，字段算 4 天（话术必须用字段口径）")
+    print(f"       {STATE_LABEL[v.state]}｜可发={v.can_send}｜归属={v.owner}")
+    print(f"       话术：{text}")
+    if problems:
+        print(f"       !!! {' / '.join(problems)}")
+    print()
+
+    total = len(CASES) + 1
+    print(f"结果：{passed} 通过 / {failed} 失败，共 {total} 条")
     return 0 if failed == 0 else 1
 
 

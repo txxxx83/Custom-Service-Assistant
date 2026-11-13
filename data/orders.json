@@ -326,14 +326,28 @@
       "whyThisOrder": "对话里客服已说“在仓库处理中”，但换货单没落库；与 C1 的“退款单未生成”同一种说法，避免出现“查无此单”"
     }
   ],
-  "archivedConversations": [
+  "noLookupConversations": [
     {
-      "convId": "C6",
-      "reason": "已解决（换货完成），不参与判定演示，订单详情不再查询"
+      "convId": "C4",
+      "reason": "对话命中投诉/法律风险词，第①步即 blocked，不进入查单。会话上的 orderId（SO20261101008）只是展示字段，未落进 orders 数组——这不是数据缺失，是这条会话根本不需要订单事实。"
     },
     {
       "convId": "C7",
-      "reason": "发票咨询，无需订单事实即可判定 no_knowledge（知识库无发票规则），保留为真实触发样例"
+      "reason": "发票咨询，知识库无发票规则，第⑤步 no_knowledge，同样不需要订单事实。orderId（SO20261028031）为展示字段。"
+    }
+  ],
+  "sceneOrders": [
+    {
+      "convId": "C8",
+      "orderId": "SO20261106012",
+      "scene": "A｜退货原因",
+      "note": "只用于退货原因页与「买错色号」同义召回用例，不在工作台 7 条会话列表里"
+    },
+    {
+      "convId": "C9",
+      "orderId": "SO20261106018",
+      "scene": "B｜参数缺失",
+      "note": "只用于「开封后使用期限」缺字段用例，以及「同一张单问无关字段不该被拦」的对照用例"
     }
   ],
   "lookupRules": {

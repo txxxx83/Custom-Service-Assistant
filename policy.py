@@ -17,7 +17,8 @@
 3. 订单是否查得到（只有"这个问题需要订单事实"时才查）
 4. 缺字段（只缺"这次真要用到"的字段）
 5. 知识匹配（有没有可引用的规则）
-6. 出口
+6. 规则风险等级（命中的规则标了 risk_level=high，也不自动作答）
+7. 出口
 
 第 1、2 步放在查订单之前，是因为它们不依赖订单事实。若先查订单，
 "规则冲突但订单号打错"时会先报 need_info，把冲突藏起来——藏起来的
@@ -106,6 +107,9 @@ class Verdict:
     intent: str
     owner: str = ""
     order_no: str = ""
+    # 判定的参考时刻（模拟数据没有真实时钟，取会话最后一条消息的时间）。
+    # 话术里所有"停了几天"都必须由它减订单字段算出来，不许抄客户原话。
+    as_of: str = ""
     order: dict | None = None
     evidence: list[dict] = field(default_factory=list)
     missing: list[Missing] = field(default_factory=list)
@@ -331,6 +335,7 @@ def decide(
     kb: list[dict] | None = None,
     orders_doc: dict | None = None,
     dialog: str = "",
+    as_of: str = "",
 ) -> Verdict:
     """唯一判定入口。每走一步都往 v.steps 里记一条，界面只渲染不推断。"""
     question = (question or "").strip()
@@ -341,7 +346,10 @@ def decide(
     raw_hits = _recall(question, kb, intent)
     hits = _filter_hits(raw_hits, question, intent)
 
-    v = Verdict(state="", why="", question=question, intent=intent, order_no=order_no)
+    v = Verdict(
+        state="", why="", question=question, intent=intent,
+        order_no=order_no, as_of=(as_of or "").strip(),
+    )
     v.step("识别意图", intent or "无法归类")
     v.step("检索规则", f"粗召回 {len(raw_hits)} 条 → 相关性筛后 {len(hits)} 条")
 
@@ -451,7 +459,7 @@ _CN_NUM = {"一": 1, "两": 2, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6,
 
 
 def _days_mentioned(text: str) -> int | None:
-    """从客户原话里取"几天没动"的天数，取不到再退回日期差。"""
+    """取客户原话里的"几天"。只用于和字段口径对账，不作为话术依据。"""
     import re
 
     m = re.search(r"([0-9]+|[一二两三四五六七八九十])\s*天", text or "")
@@ -475,13 +483,23 @@ def compose_answer(v: Verdict) -> tuple[str, str]:
         # 平台字段形如「快件【沈阳转运中心】」，只取方括号里的地名
         m = re.search(r"【(.+?)】", raw_node)
         node = m.group(1) if m else raw_node.replace("快件", "").strip("，, ")
-        days = _days_mentioned(v.question)
+        days = _days_between(v.as_of, lg.get("lastNodeAt"))
+        claimed = _days_mentioned(v.question)
         where = f"在{node}" if node else "在途中"
-        lead = (
-            f"您反馈运单尾号 {tail} 的包裹{where}已经 {days} 天没有更新，属于异常。"
-            if days
-            else f"运单尾号 {tail} 的包裹目前{where}，超过 3 天没有更新，属于异常。"
-        )
+        # 天数只能由「参考时刻 − 物流节点时间」算出来。客户说"五天没动"是他的口径，
+        # 不是依据——这里曾经直接抄客户那个数字，等于系统自己违反"只说有依据的话"。
+        if days is not None:
+            lead = f"您反馈运单尾号 {tail} 的包裹{where}已经 {days} 天没有更新，属于异常。"
+            if claimed is not None and claimed != days:
+                v.step(
+                    "核对客户口径",
+                    f"客户说 {claimed} 天，按节点时间算 {days} 天，话术采用字段口径",
+                )
+        else:
+            lead = (
+                f"运单尾号 {tail} 的包裹目前{where}，节点更新时间缺失，"
+                "算不出停滞天数，先按异常登记催件。"
+            )
         return (
             f"{lead}按规则可以为您登记催件并转专员跟进；需要我现在提交登记吗？",
             "order",
@@ -581,7 +599,7 @@ def return_reasons(order: dict) -> list[ReasonOption]:
 
     # ① 七天无理由
     if opened:
-        why_7d = "已拆封：美妆个护一经拆封不支持七天无理由（售后规则-003）。"
+        why_7d = "已拆封：美妆个护一经拆封不支持七天无理由（售后规则-001 的适用条件与不可答说明）。"
         ok_7d = False
     elif days is None:
         why_7d = "缺签收时间，算不出是否在 7 天内，不能承诺可退。"
@@ -627,7 +645,7 @@ def return_reasons(order: dict) -> list[ReasonOption]:
 
     # ③ 品质退货
     if has_quality_evidence:
-        ok_q, why_q = True, "客户原话提到质量问题，但需医院证明或质检报告后才能按质量处理（售后规则-003）。"
+        ok_q, why_q = True, "客户原话提到质量问题，但需医院证明或质检报告后才能按质量处理（订单 policyHooks K2；过敏类另见售后规则-003，必须转人工）。"
     else:
         ok_q = False
         why_q = (
