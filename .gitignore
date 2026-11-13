@@ -16,3 +16,9 @@ secrets.toml
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 自用备考材料：本地保留，不进仓库
+docs/产品经理带教手册.md
+docs/产品经理必答问题手册.docx
+docs/用户研究与走查方案.md
+docs/下一步清单.md
