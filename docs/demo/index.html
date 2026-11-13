@@ -1,0 +1,380 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>电商售后 AI 客服工作台 · 可点原型（静态版）</title>
+<style>
+  :root{
+    --ink:#1f2733; --sub:#6b7280; --line:#e5e7eb; --bg:#f7f8fa;
+    --blue:#2563eb; --blue-soft:#eef3ff; --green:#059669; --green-soft:#ecfdf5;
+    --amber:#b45309; --amber-soft:#fffbeb; --red:#dc2626; --red-soft:#fef2f2;
+    --purple:#7c3aed; --purple-soft:#f5f3ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+       font-size:14px;line-height:1.65}
+  .wrap{max-width:1560px;margin:0 auto;padding:26px 34px 60px}
+  h1{font-size:30px;margin:0 0 6px;letter-spacing:-.4px}
+  .lede{color:var(--sub);font-size:13.5px;margin:0 0 16px}
+  .tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-bottom:20px}
+  .tab{padding:8px 2px 10px;cursor:pointer;color:var(--sub);font-size:14.5px;border-bottom:2px solid transparent}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:6px}
+  .kpi{border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+  .kpi .n{font-size:24px;font-weight:700;line-height:1.2}
+  .kpi .n.warn{color:var(--red)}
+  .kpi .l{color:var(--sub);font-size:12.5px}
+  .note{color:var(--sub);font-size:12.5px;margin:6px 0 16px}
+  .cols{display:grid;grid-template-columns:300px 1fr 400px;gap:20px;align-items:start}
+  .card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+  .card + .card{margin-top:12px}
+  .card h3{margin:0 0 10px;font-size:14px;display:flex;align-items:center;justify-content:space-between}
+  .search{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;margin-bottom:10px}
+  .conv{border:1px solid var(--line);border-radius:8px;padding:7px 11px;margin-bottom:6px;cursor:pointer;
+        font-size:13px;display:flex;align-items:center;gap:7px}
+  .conv.on{background:var(--blue-soft);border-color:#c7d7fe;color:#1d4ed8;font-weight:600}
+  .dot{width:8px;height:8px;border-radius:50%;background:#d1d5db;flex:none}
+  .dot.risk{background:var(--red)}
+  .msgs{height:430px;overflow:auto;padding:2px 2px 0}
+  .msg{max-width:78%;margin:0 0 12px;padding:9px 13px;border-radius:12px;font-size:13.5px}
+  .msg.customer{background:#f3f4f6;border-top-left-radius:4px}
+  .msg.agent{background:var(--blue);color:#fff;margin-left:auto;border-top-right-radius:4px}
+  .msg.sys{background:#fff;border:1px dashed var(--line);color:var(--sub);font-size:12px;max-width:100%}
+  .chip{display:inline-block;padding:1px 8px;border-radius:20px;font-size:12px;border:1px solid transparent;white-space:nowrap}
+  .chip.green{background:var(--green-soft);color:var(--green);border-color:#a7f3d0}
+  .chip.amber{background:var(--amber-soft);color:var(--amber);border-color:#fde68a}
+  .chip.red{background:var(--red-soft);color:var(--red);border-color:#fecaca}
+  .chip.gray{background:#f3f4f6;color:#4b5563;border-color:#e5e7eb}
+  .chip.blue{background:var(--blue-soft);color:#1d4ed8;border-color:#c7d7fe}
+  .chip.purple{background:var(--purple-soft);color:var(--purple);border-color:#ddd6fe}
+  .meta{color:var(--sub);font-size:12px}
+  .trace{display:grid;grid-template-columns:96px 1fr;gap:5px 10px;font-size:12.5px}
+  .trace .k{color:var(--sub)}
+  .trace .v{color:var(--ink)}
+  .v-no{color:var(--red)} .v-ok{color:var(--green)} .v-warn{color:var(--amber)}
+  .ev{border-left:3px solid var(--blue);background:#fafbff;padding:7px 10px;border-radius:4px;margin-bottom:8px;font-size:12.5px}
+  .ev b{display:block;font-size:13px;margin-bottom:2px}
+  .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  button{font-family:inherit;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);
+         background:#fff;cursor:pointer;color:var(--ink)}
+  button.primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
+  button.ghost{color:var(--sub)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  textarea{width:100%;min-height:76px;border:1px solid var(--line);border-radius:8px;padding:9px 11px;
+           font-family:inherit;font-size:13px;resize:vertical}
+  .facts{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:14px 0}
+  .fact{border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+  .fact .k{color:var(--sub);font-size:11.5px}
+  .fact .v{font-size:13px;font-weight:600}
+  .rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:14px 0}
+  .rcard{border:1px solid var(--line);border-radius:12px;padding:14px}
+  .rcard.on{border-color:#c7d7fe;background:#fbfcff}
+  .rcard h4{margin:0 0 6px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .rcard p{color:var(--sub);font-size:12.5px;margin:6px 0}
+  .cost{border-top:1px dashed var(--line);margin-top:10px;padding-top:8px;font-size:12.5px}
+  .cost div{display:flex;justify-content:space-between;margin-bottom:3px}
+  .bad{color:var(--red)}
+  .samples{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .sample{border:1px solid var(--line);border-radius:20px;padding:6px 13px;font-size:12.5px;cursor:pointer;background:#fff}
+  .sample.on{background:var(--blue-soft);border-color:#c7d7fe;color:#1d4ed8}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left}
+  th{background:#f9fafb;font-weight:600;color:#374151}
+  .foot{color:#9ca3af;font-size:12px;margin-top:26px;text-align:center}
+  .banner{background:var(--amber-soft);border:1px solid #fde68a;color:#92400e;border-radius:8px;
+          padding:9px 12px;font-size:12.5px;margin-bottom:16px}
+  a{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>电商售后 AI 客服工作台</h1>
+  <p class="lede">只给建议、不替人做决定：信息不足、知识不足、高风险、规则冲突这四种情况下，它不给话术，只给动作（追问 / 转人工 / 禁止发送）。</p>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="work">🖥 工作台</div>
+    <div class="tab" data-tab="reason">🧾 退货原因</div>
+    <div class="tab" data-tab="try">⌨ 试一句</div>
+  </div>
+
+  <div id="tab-work">
+    <div class="kpis" id="kpis"></div>
+    <div class="note" id="kpiNote"></div>
+    <div class="cols">
+      <div>
+        <div class="card">
+          <h3>会话列表 <span class="meta" id="listCount"></span></h3>
+          <input class="search" id="q" placeholder="客户名 / 订单号 / 会话编号" />
+          <div id="convList" style="height:470px;overflow:auto"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3><span id="convTitle">—</span> <span class="meta" id="convMeta"></span></h3>
+          <div class="msgs" id="msgs"></div>
+        </div>
+        <div class="card">
+          <h3>回复内容</h3>
+          <textarea id="draft" placeholder="AI 建议可用时会自动填入；也可以由客服改写。"></textarea>
+          <div class="row" id="actions"></div>
+          <div class="meta" id="gate" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" id="sugCard"></div>
+        <div class="card" id="traceCard"></div>
+        <div class="card" id="evCard"></div>
+        <div class="card" id="lifeCard"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-reason" style="display:none">
+    <h2 style="font-size:24px;margin:6px 0 4px">同一单，三种退货原因，代价不一样</h2>
+    <p class="meta" style="margin:0 0 10px">三个原因在后台都提交得上去，但只有一个不会让商家多掏运费、被计入商责退货率；本系统只允许那一个，其余两个要么不让选，要么必须补证据。</p>
+    <div class="facts" id="facts"></div>
+    <div class="card" id="words" style="margin-bottom:0"></div>
+    <div class="rcards" id="rcards"></div>
+    <div class="cols" style="grid-template-columns:1fr 420px">
+      <div class="card" id="rVerdict"></div>
+      <div class="card" id="rTable"></div>
+    </div>
+    <p class="meta" style="margin-top:14px">运费按单程 12 元假设，不是实际账单；品退率口径按平台而异（抖音换货计入、淘宝不计入），本原型用作者自拟模拟店铺政策。</p>
+  </div>
+
+  <div id="tab-try" style="display:none">
+    <div class="banner">静态版说明：下面 8 个例句的判定结果，是用本地 <code>policy.decide()</code> 预先生成后写进 <code>data.json</code> 的，页面不再重新计算。要任意输入，请本地运行 <code>python -m streamlit run app.py</code>。</div>
+    <h2 style="font-size:22px;margin:6px 0 8px">点一句客户问题，看判定层怎么走</h2>
+    <div class="samples" id="samples"></div>
+    <div class="card" id="tryResult"></div>
+  </div>
+
+  <p class="foot">全部为模拟数据，不含真实订单与客户信息 · 田笑 · 2027 届 · 判定结果由 <code>policy.py</code> 生成</p>
+</div>
+
+<script>
+const STATE_LABEL = {ready:"可审核", need_info:"信息不足", blocked:"高风险拦截", no_knowledge:"知识不足", conflict:"规则冲突", error:"查询失败"};
+const STATE_CHIP  = {ready:"green", need_info:"amber", blocked:"red", no_knowledge:"gray", conflict:"purple", error:"red"};
+const STATUS_LABEL= {processing:"处理中", waiting_customer:"等待客户", handed_off:"已转人工", resolved:"已解决"};
+const STATUS_CHIP = {processing:"amber", waiting_customer:"blue", handed_off:"gray", resolved:"green"};
+
+let D, cur=null, q="", rc="exchange", samples=[];
+const S = {};
+
+function initState(c){
+  if(!S[c.id]) S[c.id] = {status:c.status, adopted:false, sent:false, draft:"", handoff:null};
+  return S[c.id];
+}
+function esc(s){return (s||"").replace(/[&<>"]/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));}
+
+function renderKpis(){
+  const cs = D.conversations.map(c=>({c, st:initState(c)}));
+  const n = k => cs.filter(x=>x.st.status===k).length;
+  const risk = cs.filter(x=>x.c.verdict.state==="blocked").length;
+  const items = [["会话总数", cs.length, ""],["待处理", n("processing"), n("processing")?"warn":""],
+                 ["等待客户", n("waiting_customer"), ""],["已转人工", n("handed_off"), ""],["已解决", n("resolved"), ""]];
+  document.getElementById("kpis").innerHTML = items.map(([l,v,cl])=>
+    `<div class="kpi"><div class="n ${cl}">${v}</div><div class="l">${l}</div></div>`).join("");
+  document.getElementById("kpiNote").textContent =
+    `上面四格互斥，合计 ${cs.length} 条 = 会话总数；其中含风险 ${risk} 条（风险与状态是两回事，不叠加进那四格）。`;
+}
+
+function renderList(){
+  const box = document.getElementById("convList");
+  const kw = q.trim();
+  const list = D.conversations.filter(c=>!kw || (c.name+c.orderNo+c.id+c.topic).includes(kw));
+  document.getElementById("listCount").textContent = `共 ${list.length}/${D.conversations.length} 条`;
+  box.innerHTML = list.map(c=>{
+    const st = initState(c);
+    const risk = c.verdict.state==="blocked";
+    return `<div class="conv ${cur===c.id?"on":""}" data-id="${c.id}">
+      <span class="dot ${risk?"risk":""}"></span>${esc(c.name)} · ${esc(c.topic)} · ${STATUS_LABEL[st.status]}</div>`;
+  }).join("");
+  box.querySelectorAll(".conv").forEach(el=>el.onclick=()=>{cur=el.dataset.id; renderAll();});
+}
+
+function renderCenter(){
+  const c = D.conversations.find(x=>x.id===cur);
+  const st = initState(c);
+  document.getElementById("convTitle").textContent = `${c.name} · ${c.topic}`;
+  document.getElementById("convMeta").innerHTML =
+    `<span class="chip gray">会话 ${c.id}</span> <span class="chip gray">订单 ${esc(c.orderNo||"—")}</span>
+     <span class="chip ${STATUS_CHIP[st.status]}">${STATUS_LABEL[st.status]}</span>
+     <span class="chip ${c.priority==="urgent"?"red":"gray"}">优先级 ${c.priority==="urgent"?"紧急":"普通"}</span>
+     <span class="chip ${STATE_CHIP[c.verdict.state]}">AI ${STATE_LABEL[c.verdict.state]}</span>`;
+
+  const msgs = c.messages.slice();
+  if(st.appended) msgs.push({from:"agent", text:st.appended, at:""});
+  document.getElementById("msgs").innerHTML = msgs.map(m=>{
+    if(m.from==="system") return `<div class="msg sys">${esc(m.text)}</div>`;
+    return `<div class="msg ${m.from==="agent"?"agent":"customer"}">${esc(m.text)}</div>`;
+  }).join("");
+  const box = document.getElementById("msgs"); box.scrollTop = box.scrollHeight;
+
+  const ta = document.getElementById("draft");
+  ta.value = st.draft;
+  ta.oninput = e => { st.draft = e.target.value; refreshGate(); };
+
+  const gate = c.verdict.can_send && st.status!=="handed_off" && st.status!=="resolved";
+  const btns = [];
+  btns.push(`<button data-act="adopt" ${c.verdict.state!=="ready"?"disabled":""}>采纳并填入</button>`);
+  btns.push(`<button class="primary" data-act="send" ${gate?"":"disabled"}>发送回复</button>`);
+  btns.push(`<button data-act="ignore">忽略建议</button>`);
+  btns.push(`<button data-act="handoff" ${st.status==="handed_off"?"disabled":""}>转人工处理</button>`);
+  btns.push(`<button data-act="resolve" ${st.status==="resolved"?"disabled":""}>标记已解决</button>`);
+  const el = document.getElementById("actions");
+  el.innerHTML = btns.join("");
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>act(b.dataset.act, c, st));
+  refreshGate();
+}
+
+function refreshGate(){
+  const c = D.conversations.find(x=>x.id===cur), st = initState(c);
+  const gate = document.getElementById("gate");
+  if(!c.verdict.can_send) gate.innerHTML = `<span class="bad">${STATE_LABEL[c.verdict.state]}：发送已禁用。</span> ${esc(c.verdict.why)}`;
+  else if(st.status==="handed_off") gate.textContent = "已转人工，本会话不再由 AI 建议驱动。";
+  else if(st.status==="resolved") gate.textContent = "已标记解决。";
+  else gate.innerHTML = `<span style="color:#059669">可发送。</span> ${esc(c.verdict.why)}`;
+}
+
+function act(a, c, st){
+  if(a==="adopt"){ st.adopted = true; st.draft = c.suggestion; }
+  if(a==="send"){
+    if(!st.draft.trim()) return;
+    st.appended = st.draft; st.sent = true; st.status = "waiting_customer";
+  }
+  if(a==="ignore"){ st.ignored = true; }
+  if(a==="handoff"){ st.status = "handed_off"; st.handoff = c.verdict.handoff_reason; }
+  if(a==="resolve"){ st.status = "resolved"; }
+  renderAll();
+}
+
+function renderRight(){
+  const c = D.conversations.find(x=>x.id===cur), st = initState(c), v = c.verdict;
+
+  document.getElementById("sugCard").innerHTML =
+    `<h3>AI 建议 <span class="chip ${STATE_CHIP[v.state]}">${STATE_LABEL[v.state]}</span></h3>
+     <div style="font-size:13.5px">${esc(c.suggestion) || "<span class='meta'>（本状态不生成话术）</span>"}</div>
+     <div style="margin-top:8px"><span class="chip gray">${c.source==="order"?"订单字段拼的":c.source==="kb"?"规则原文":"判定层输出"}</span></div>
+     <div class="meta" style="margin-top:8px">判定：${STATE_LABEL[v.state]}　归属：${esc(v.owner||"—")}　为什么：${esc(v.why)}</div>`;
+
+  const rows = (v.steps||[]).map(([k,val])=>{
+    const cls = /未命中|无互斥|不需要|没有订单号/.test(val) ? "v-no"
+              : /命中|齐全|可发|采用|非高风险/.test(val) ? "v-ok" : "v-warn";
+    return `<div class="k">${esc(k)}</div><div class="v ${cls}">${esc(val)}</div>`;
+  }).join("");
+  document.getElementById("traceCard").innerHTML =
+    `<h3>它是怎么判出来的（判定层真实步骤）</h3><div class="trace">${rows}</div>`;
+
+  const evs = (v.evidence||[]).map(e=>
+    `<div class="ev"><b>${esc(e.title||e.id)}</b>
+      <div class="meta">${esc(e.id)} ｜ 风险 ${esc(e.risk||"—")}</div>${esc(e.excerpt)}</div>`).join("");
+  const miss = (v.missing||[]).map(m=>`<div class="ev" style="border-color:#f59e0b;background:#fffdf5">
+      <b>缺「${esc(m.field)}」</b>${esc(m.ask)}</div>`).join("");
+  document.getElementById("evCard").innerHTML =
+    `<h3>知识依据（${(v.evidence||[]).length} 条）</h3>${evs || "<div class='meta'>该建议没有关联知识依据。</div>"}
+     ${miss?`<h3 style="margin-top:12px">这次缺什么</h3>${miss}`:""}`;
+
+  const life = st.sent ? ["sent","已发送"] : st.adopted ? ["adopted","已采纳未发送"] : ["pending","未处理"];
+  document.getElementById("lifeCard").innerHTML =
+    `<h3>建议生命周期</h3>
+     <div><span class="dot" style="background:${life[0]==="sent"?"#059669":life[0]==="adopted"?"#2563eb":"#d97706"};display:inline-block"></span>
+      <b style="margin-left:6px">${life[1]}</b></div>
+     <div class="meta" style="margin-top:6px">是否采纳：${st.adopted||st.sent?"是":"否"}　是否改写：${st.sent&&st.draft!==c.suggestion?"是":"否"}</div>`;
+}
+
+function renderAll(){
+  renderKpis(); renderList(); renderCenter(); renderRight();
+}
+
+/* ---------- 退货原因 ---------- */
+function renderReason(){
+  const A = D.orderA, af = A.afterSale||{};
+  document.getElementById("facts").innerHTML = [
+    ["订单号", A.orderNo],["商品", A.item],["下单色号", "01 象牙白"],["客户想要","02 自然色"],
+    ["签收","2026-11-06"],["拆封 / 使用","未拆封 · 未使用"]
+  ].map(([k,v])=>`<div class="fact"><div class="k">${k}</div><div class="v">${esc(v)}</div></div>`).join("");
+
+  document.getElementById("words").innerHTML =
+    `<div style="font-size:14px">客户原话：「${esc(af.reason||"拍错色号，想换成 02 自然色")}」</div>
+     <div class="meta">售后类型：${esc(af.type||"exchange")} ｜ 申请时间：${esc(af.appliedAt||"")}</div>`;
+
+  document.getElementById("rcards").innerHTML = D.reasons.map(r=>{
+    const on = r.code===rc;
+    return `<div class="rcard ${on?"on":""}" data-code="${r.code}">
+      <h4>${esc(r.label)}
+        <span class="chip ${r.allowed?"green":"red"}">${r.allowed?"可用":"不可用"}</span>
+        ${on?'<span class="chip blue">当前选择</span>':""}</h4>
+      <p>${esc(r.why)}</p>
+      <div class="cost">
+        <div><span>运费</span><b class="${r.fee>0?"bad":""}">${esc(r.cost)}</b></div>
+        <div><span>品退率</span><b class="${r.countsRate?"bad":""}">${r.countsRate?"计入商责退货率":"不计"}</b></div>
+        <div><span>店铺评分</span><b class="${r.affectsScore?"bad":""}">${r.affectsScore?"计入考核":"不影响"}</b></div>
+      </div>
+      <div class="row"><button ${r.allowed?"":"disabled"} data-pick="${r.code}">${r.allowed?"选这个":"选不了"}</button></div>
+    </div>`;
+  }).join("");
+  document.getElementById("rcards").querySelectorAll("[data-pick]").forEach(b=>{
+    b.onclick=()=>{ rc=b.dataset.pick; renderReason(); };
+  });
+
+  const picked = D.reasons.find(r=>r.code===rc);
+  const script = {
+    seven_day:"您好，这支粉底液未拆封，可以走七天无理由退货：寄回运费由您承担，我们收到后 48 小时内退款。",
+    exchange:"您好，可以给您换同款 02 自然色。请把现有这支寄回（寄回运费您承担），我们收到后当天发出新色号。",
+    quality_return:""
+  }[rc];
+  document.getElementById("rVerdict").innerHTML =
+    `<h3>这一步的判定 <span class="chip ${picked.allowed?"green":"red"}">${picked.allowed?"可发":"不可选"}</span></h3>
+     <div style="font-size:14px;font-weight:600;margin-bottom:4px">${picked.allowed?"可以这样回复 · "+esc(picked.label):"不生成话术 · 需先补证据"}</div>
+     <div style="font-size:13.5px">${script?esc(script):"订单里没有任何质量证据：未拆封、未使用，客户原话是「拍错色号」。要选它，必须先补质检报告或医院证明，并由组长升级——因为选错的代价不会消失，只会从这一单转移到品退率和下个月的处罚里。"}</div>
+     <div class="meta" style="margin-top:8px">依据：${picked.code==="seven_day"?"售后规则-001":picked.code==="exchange"?"售后规则-005":"—"} · 兜底：客服</div>`;
+
+  document.getElementById("rTable").innerHTML =
+    `<h3>三种选法的账</h3><table><thead><tr><th>原因</th><th>商家多掏</th><th>品退率</th></tr></thead><tbody>
+     ${D.reasons.map(r=>`<tr><td class="${r.allowed?"":"bad"}">${esc(r.label)}</td>
+       <td>¥${r.fee}</td><td class="${r.countsRate?"bad":""}">${r.countsRate?"计入":"不计"}</td></tr>`).join("")}
+     </tbody></table>`;
+}
+
+/* ---------- 试一句 ---------- */
+function renderTry(){
+  document.getElementById("samples").innerHTML = D.samples.map((s,i)=>
+    `<div class="sample" data-i="${i}">${esc(s.q)}</div>`).join("");
+  document.querySelectorAll(".sample").forEach(el=>el.onclick=()=>{
+    document.querySelectorAll(".sample").forEach(x=>x.classList.remove("on"));
+    el.classList.add("on");
+    const s = D.samples[+el.dataset.i], v = s.verdict;
+    const rows = (v.steps||[]).map(([k,val])=>{
+      const cls = /未命中|无互斥|不需要|没有订单号/.test(val) ? "v-no"
+                : /命中|齐全|可发|采用|非高风险/.test(val) ? "v-ok" : "v-warn";
+      return `<div class="k">${esc(k)}</div><div class="v ${cls}">${esc(val)}</div>`;
+    }).join("");
+    document.getElementById("tryResult").innerHTML =
+      `<h3>判定结果 <span class="chip ${STATE_CHIP[v.state]}">${STATE_LABEL[v.state]}</span></h3>
+       <div style="font-size:13.5px;margin-bottom:8px">${esc(v.why)}</div>
+       <div class="meta" style="margin-bottom:10px">问题：${esc(s.q)}　｜　订单：${esc(s.orderNo||"（未提供）")}　｜　归属：${esc(v.owner)}</div>
+       <div class="trace">${rows}</div>`;
+  });
+}
+
+/* ---------- boot ---------- */
+fetch("data.json").then(r=>r.json()).then(d=>{
+  D = d; cur = D.conversations[0].id;
+  D.conversations.forEach(initState);
+  renderAll(); renderReason(); renderTry();
+  document.getElementById("q").oninput = e => { q = e.target.value; renderList(); };
+  document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");
+    ["work","reason","try"].forEach(k=>{
+      document.getElementById("tab-"+k).style.display = (k===t.dataset.tab) ? "" : "none";
+    });
+  });
+});
+</script>
+</body>
+</html>
+
