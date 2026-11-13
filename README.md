@@ -78,6 +78,7 @@ python -m streamlit run app.py
 | `data/evaluation_results.csv` | 50 条用例 × 3 个规则版本的离线结果（150 行） |
 | `mock-data.json` | 7 个会话、消息、转人工原因；每条会话带一句「如果没有这道判定」 |
 | `test_policy.py` | 15 条判定用例，`python test_policy.py` 直接跑 |
+| `docs/verify_claims.py` | 文档—代码一致性自检：93 条断言，`python docs/verify_claims.py`，任一不符即非零退出 |
 
 订单是可查询的数据，不是对话里的一句旁白——这是这一版和前几版最大的差别。「退款三天没到账」判成信息不足，是因为**退款单号字段为空**（退款单没落库），不是因为话术不够好。
 
