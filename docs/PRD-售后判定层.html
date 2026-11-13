@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -70,7 +70,7 @@ pre code { background:none; color:inherit; padding:0; }
   <h1>电商售后 AI 客服 · 发送前判定层</h1>
   <div class="header-meta">
     <span>版本：v1.2</span>
-    <span>作者：本人（产品 / 一人完成）</span>
+    <span>产品 / 开发 / 测试：本人</span>
     <span>日期：2026-11-12</span>
     <span>状态：原型已实现 · 未上线</span>
     <span>类目：美妆个护（单一类目）</span>
@@ -96,18 +96,19 @@ pre code { background:none; color:inherit; padding:0; }
 
 <div class="info-box">
   <strong>先读这一段：这份 PRD 的性质</strong>
-  <p style="margin:8px 0 0">这是一个<strong>个人作品集项目</strong>的需求文档，作者一人承担产品、开发、测试三个角色，<strong>没有真实用户、没有上线、没有真实业务指标</strong>。为了不把它写成一份假装有大团队的文档，本文做了三件事：</p>
+  <p style="margin:8px 0 0">这是一个<strong>个人作品集项目</strong>的需求文档，产品、开发、测试三个角色都由我承担，<strong>没有真实用户、没有上线、没有真实业务指标</strong>。为了不把它写成一份假装有大团队的文档，本文做了三件事：</p>
   <ul style="margin:8px 0 0 22px">
     <li>功能清单里每一条都标注<strong>真实实现状态</strong>（已实现 / 部分实现 / 未实现），可以逐条对着代码核；</li>
     <li>所有数字要么是<strong>跑代码得到的</strong>（50 条评测、15 条验收用例、31 条规则），要么<strong>显式标注为假设</strong>（如 ¥12 运费）；</li>
     <li>排期是<strong>个人可执行计划</strong>（每周 14 小时），不是虚构的团队工时。</li>
   </ul>
-  <p style="margin:8px 0 0">面试官如果问"你这个 PRD 是真做过的吗"——功能清单的状态列和验收标准就是答案。</p>
+  <p style="margin:8px 0 0">被问到"这个 PRD 是真做过的吗"——功能清单的状态列和验收标准就是答案。</p>
 </div>
 
 <!-- ============ 1. 需求背景 ============ -->
 <div class="section" id="background">
   <h2>1. 需求背景</h2>
+  <p><strong>一句话定位</strong>：查得到、可逆的（物流、发票、地址）自动答；涉钱涉责的（退款、赔付、质量认定）必须先过人一遍——答错的代价不可转移。</p>
 
   <h3>1.1 问题描述</h3>
   <p>电商售后客服的成本，通常被归因为"答得慢"。但在这个项目调研的场景里，真正贵的不是慢，而是<strong>答得没依据</strong>——客服说出一句听起来专业、实际上系统里根本没有对应事实的话。</p>
