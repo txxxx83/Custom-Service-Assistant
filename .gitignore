@@ -22,3 +22,13 @@ docs/产品经理带教手册.md
 docs/产品经理必答问题手册.docx
 docs/用户研究与走查方案.md
 docs/下一步清单.md
+docs/产品经理带教手册.docx
+docs/用户研究与走查方案.docx
+
+# Word 生成物与临时文件：只发 PDF 和 md，不发 docx（一页纸除外）
+docs/PRD-售后判定层.docx
+docs/问题框定.docx
+docs/竞品与行业调研.docx
+docs/旧版vs新版-7条会话对账.docx
+~$*
+.docx_work/
